@@ -1,0 +1,16 @@
+.comments {
+  margin: 2rem auto;
+  width: 90%;
+  max-width: 40rem;
+}
+
+.comments ul {
+  list-style: none;
+  padding: 1rem;
+}
+
+.comments li {
+  border: 2px solid #ccc;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+}
