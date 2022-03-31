@@ -26,9 +26,10 @@ const AddReply = (props) => {
       .post("http://api.comment.com/v1/comments", data);
 
     if (response.status === 200) {
-      props.onAddComment(response.data.comment);
+      props.onAddComment();
     }
 
+    // not advisable but should suffice for now
     nameInputRef.current.value = "";
     commentInputRef.current.value = "";
   };

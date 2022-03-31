@@ -21,20 +21,8 @@ const App = () => {
     fetchComment();
   }, []);
 
-  const addCommentHandler = (comment) => {
-    setCommentsList((prevCommentList) => {
-      return [
-        ...prevCommentList,
-        {
-          id: comment.id,
-          name: comment.name,
-          body: comment.body,
-          comment_level: comment.comment_level,
-          reply_id: comment.reply_id,
-          replies: []
-        }
-      ];
-    });
+  const addCommentHandler = () => {
+    fetchComment();
   };
 
   return (
@@ -46,7 +34,7 @@ const App = () => {
       <Card>
         <h3>COMMENT SECTION</h3>
         <AddComment onAddComment={addCommentHandler} />
-        <CommentsList comments={commentsList} />
+        <CommentsList comments={commentsList} onAddReply={addCommentHandler} />
       </Card>
     </Fragment>
   );

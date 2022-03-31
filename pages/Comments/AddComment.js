@@ -29,6 +29,7 @@ const AddComment = (props) => {
       props.onAddComment(response.data.comment);
     }
 
+    // not advisable but should suffice for now
     nameInputRef.current.value = "";
     commentInputRef.current.value = "";
   };

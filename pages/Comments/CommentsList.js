@@ -13,8 +13,9 @@ const CommentsList = (props) => {
     setSelected(event.target.value);
   };
 
-  const addRepplyHandler = (reply) => {
-    props.onAddReply(reply);
+  const addRepplyHandler = () => {
+    props.onAddReply();
+    setSelected("");
   };
 
   return (
