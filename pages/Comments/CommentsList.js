@@ -1,11 +1,14 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useRef } from "react";
+import axios from 'axios';
 
 import Card from "../UI/Card";
 import Button from "../UI/Button";
-import AddReply from "./AddReply";
+import AddComment from "./AddComment";
 import classes from "./CommentsList.module.css";
 
 const CommentsList = (props) => {
+  const nameInputRef = useRef();
+  const commentInputRef = useRef();
   const [selected, setSelected] = useState("");
 
   const replyCommentHandler = (event) => {
@@ -13,9 +16,30 @@ const CommentsList = (props) => {
     setSelected(event.target.value);
   };
 
-  const addRepplyHandler = () => {
-    props.onAddReply();
-    setSelected("");
+  const addCommentHandler = async (event) => {
+    event.preventDefault();
+
+    const enteredName = nameInputRef.current.value;
+    const enteredComment = commentInputRef.current.value;
+
+    const data = {
+      name: enteredName,
+      body: enteredComment,
+      comment_level: +event.target.getAttribute("data-commentlvl") + 1,
+      reply_id: +event.target.getAttribute("data-id")
+    };
+
+    const response = await axios
+      .post("http://api.comment.com/v1/comments", data);
+
+    if (response.status === 200) {
+      props.onAddReply();
+      setSelected("");
+    }
+
+    // not advisable but should suffice for now
+    nameInputRef.current.value = "";
+    commentInputRef.current.value = "";
   };
 
   return (
@@ -31,7 +55,7 @@ const CommentsList = (props) => {
                     <p>{comment.body}</p>
                     <Button value={comment.id} onClick={replyCommentHandler}>Reply</Button>
 
-                    {+comment.id === +selected && <AddReply id={comment.id} comment_level={comment.comment_level} onAddComment={addRepplyHandler} />}
+                    {+comment.id === +selected && <AddComment id={comment.id} comment_level={comment.comment_level} nameInputRef={nameInputRef} commentInputRef={commentInputRef} onSubmit={addCommentHandler} />}
 
                     {comment.replies.length > 0 && (
                       <ul>
@@ -45,7 +69,7 @@ const CommentsList = (props) => {
                                   Reply
                                 </Button>
 
-                                {+secondLvlComment.id === +selected && <AddReply id={secondLvlComment.id} comment_level={secondLvlComment.comment_level} onAddComment={addRepplyHandler} />}
+                                {+secondLvlComment.id === +selected && <AddComment id={secondLvlComment.id} comment_level={secondLvlComment.comment_level} nameInputRef={nameInputRef} commentInputRef={commentInputRef} onSubmit={addCommentHandler} />}
 
                                 {secondLvlComment.replies.length > 0 && (
                                   <ul>

@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import axios from 'axios';
 
 import Card from "./UI/Card";
@@ -6,6 +6,9 @@ import AddComment from "./Comments/AddComment";
 import CommentsList from "./Comments/CommentsList";
 
 const App = () => {
+  const nameInputRef = useRef();
+  const commentInputRef = useRef();
+
   const [commentsList, setCommentsList] = useState([]);
 
   const fetchComment = async () => {
@@ -21,8 +24,33 @@ const App = () => {
     fetchComment();
   }, []);
 
-  const addCommentHandler = () => {
+  const commentHandler = () => {
     fetchComment();
+  };
+
+  const addCommentHandler = async (event) => {
+    event.preventDefault();
+
+    const enteredName = nameInputRef.current.value;
+    const enteredComment = commentInputRef.current.value;
+
+    const data = {
+      name: enteredName,
+      body: enteredComment,
+      comment_level: 1,
+      reply_id: 0
+    };
+
+    const response = await axios
+      .post("http://api.comment.com/v1/comments", data);
+
+    if (response.status === 200) {
+      fetchComment();
+    }
+
+    // not advisable but should suffice for now
+    nameInputRef.current.value = "";
+    commentInputRef.current.value = "";
   };
 
   return (
@@ -33,8 +61,8 @@ const App = () => {
       </Card>
       <Card>
         <h3>COMMENT SECTION</h3>
-        <AddComment onAddComment={addCommentHandler} />
-        <CommentsList comments={commentsList} onAddReply={addCommentHandler} />
+        <AddComment onSubmit={addCommentHandler} nameInputRef={nameInputRef} commentInputRef={commentInputRef} onAddComment={commentHandler} />
+        <CommentsList comments={commentsList} onAddReply={commentHandler} />
       </Card>
     </Fragment>
   );
